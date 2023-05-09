@@ -145,7 +145,6 @@ public class CreditAccountTest {
         });
     }
 
-
     /**
      * Тесты метода "Add".
      * Осуществим позитивное и негативное функциональное тестирование.
@@ -180,6 +179,7 @@ public class CreditAccountTest {
     // Тест реализует методику "граничных значений" по параметру "amount" = 1.
     // Тест должен завершаться без ошибок, метод должен вернуть true, операция
     // пополнения должна проходить.
+    // Тест проходит с ошибкой, но это является следствием ошибки, описанной в предыдущем тесте.
     @Test
     public void shouldAddToPositiveTestBalanceOneValue() {
         CreditAccount account = new CreditAccount(
