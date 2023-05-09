@@ -20,11 +20,40 @@ public class SavingAccount extends Account {
      * @param rate - неотрицательное число, ставка в процентах годовых на остаток
      */
     public SavingAccount(int initialBalance, int minBalance, int maxBalance, int rate) {
+        // minBalance должен быть неотрицательным, что следует из следующих условий задания:
+        // - баланс должен быть неотрицательным;
+        // - баланс находится в пределах от минимального до максимального.
+        if (minBalance < 0) {
+            throw new IllegalArgumentException(
+                    "Минимальный баланс не может быть отрицательным, а у вас: " + minBalance
+            );
+        }
+        // maxBalance должен быть > minBalance, считаем, что они не могут быть равными (это логично),
+        // хотя прямого такого требования нет
+        if (maxBalance <= minBalance) {
+            throw new IllegalArgumentException(
+                    "Максимальный баланс должен быть больше минимального, а у вас: \n" +
+                    "- минимальный баланс: " + minBalance + "\n;" +
+                    "- максимальный баланс: " + maxBalance
+            );
+        }
+        // initialBalance должен быть >= minBalance и <= maxBalance
+        if ((initialBalance < minBalance) || (initialBalance > maxBalance)) {
+            throw new IllegalArgumentException(
+                    "Начальный баланс должен быть в пределах от минимального до максимального, а у вас: \n" +
+                            "- начальный баланс: " + initialBalance + "\n;" +
+                            "- минимальный баланс: " + minBalance + "\n;" +
+                            "- максимальный баланс: " + maxBalance
+            );
+        }
+        // 3-ри предыдущих проверки обеспечат в том числи и проверку на неотрицательный баланс
+        // rate должен быть > 0
         if (rate < 0) {
             throw new IllegalArgumentException(
               "Накопительная ставка не может быть отрицательной, а у вас: " + rate
             );
         }
+        // Запоминаем переданные через параметры данные в поля объекта
         this.balance = initialBalance;
         this.minBalance = minBalance;
         this.maxBalance = maxBalance;
@@ -45,8 +74,8 @@ public class SavingAccount extends Account {
         if (amount <= 0) {
             return false;
         }
-        balance = balance - amount;
-        if (balance > minBalance) {
+        if ((balance - amount) >= minBalance) {                 // добавляем требование "=>" balance может = minBalance
+            balance = balance - amount;                         // добавляем операцию "уменьшение счета"
             return true;
         } else {
             return false;
@@ -69,8 +98,8 @@ public class SavingAccount extends Account {
         if (amount <= 0) {
             return false;
         }
-        if (balance + amount < maxBalance) {
-            balance = amount;
+        if ((balance + amount) <= maxBalance) {                 // добавляем требование "<=" balance может = maxBalance
+            balance = balance + amount;                         // добавляем операцию "увеличение счета"
             return true;
         } else {
             return false;
