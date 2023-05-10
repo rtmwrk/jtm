@@ -116,7 +116,7 @@ public class SavingAccount extends Account {
     @Override
     public int yearChange() {
         return balance / 100 * rate;
-    }
+    }     // Помним, что баланс не может быть отрицательным
 
     public int getMinBalance() {
         return minBalance;

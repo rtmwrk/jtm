@@ -197,15 +197,12 @@ public class SavingAccountTest {
 
     @Test
     public void shouldNotAcceptNegativeRate() {
-        SavingAccount account = new SavingAccount(
+        Assertions.assertThrows(IllegalArgumentException.class,() -> {
+           SavingAccount account = new SavingAccount(
                 2_000,
                 1_000,
                 10_000,
-                -1
-        );
-
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            account.setRate(-1);
+                -1);
         });
     }
 

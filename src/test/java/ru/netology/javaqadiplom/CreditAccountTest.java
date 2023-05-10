@@ -16,6 +16,12 @@ public class CreditAccountTest {
      * плюс протестируем логические условия работы конструктора.            .
      */
 
+
+    // Комментарии подобного рода были справедливы для первоначальной версии класса "CreditAccount.class".
+    // После выявления дефектов, составления баг-репортов и исправления кода класса, комментарии утратили
+    // актуальность в части "!!! Ошибка..."
+
+
     // Проведем функциональное позитивное тестирование конструктора методом "эквивалентных значений", при
     // передаче конструктору параметров, ПОДОБРАННЫХ специальным образом.
     // Тест должен завершаться без ошибки.
@@ -171,8 +177,8 @@ public class CreditAccountTest {
         );
         int oldBalance = account.getBalance();                                  // запоминает значение баланса счета
                                                                                 // пытаемся пополнить баланс
-        Assertions.assertTrue(account.add(1000));                               // метод вернул true, как результат
-        Assertions.assertEquals(oldBalance+1000, account.getBalance()); // баланс увеличился на 1
+        Assertions.assertTrue(account.add(1_000));                              // метод вернул true, как результат
+        Assertions.assertEquals(oldBalance+1_000, account.getBalance()); // баланс увеличился на 1
     }
 
     // Функциональный, позитивный тест параметра "amount" метода.
@@ -310,12 +316,14 @@ public class CreditAccountTest {
                 5_000,
                 15
         );
-        int oldBalance = account.getBalance();                                  // запоминает значение баланса счета
 
         Assertions.assertTrue(account.pay(account.balance+
                                             account.creditLimit-
                                             1));                                // метод должен вернуть true,
-        Assertions.assertEquals(oldBalance, account.getBalance());              // баланс должен меняться
+        Assertions.assertEquals(account.balance-
+                                        (account.balance+
+                                        account.creditLimit-
+                                        1), account.getBalance());              // баланс должен меняться
     }
 
     // Теперь протестируем работу метода при граничных значениях параметра "amount", по
@@ -392,17 +400,18 @@ public class CreditAccountTest {
     @Test
     public void shouldChangeToPositiveTest() {
         CreditAccount account = new CreditAccount(                                      // Помним, что конструктор
-                -200,                                                                   // работает с ошибками.
-                5_000,                                                                  // Воспользуемся нашим анализом
-                15                                                                      // этой ошибки и зададим значения
-        );                                                                              // папаметрам так, чтобы было
-                                                                                        // удобно проверять имеено метод
-                                                                                        // "yearChange"
+                5_000,                                                                  // работает с ошибками.
+                5_000,
+                15
+        );
+
+        account.pay(5_200);                                                     // Искусственно сделаем отрицательный
+                                                                                       // баланс, "оплатив" покупку
         Assertions.assertEquals(-30,account.yearChange());
     }
 
     // Далее, изучая указанные условия и код метода видим наличие следующей ошибки в его реализации:
-    // 1. Код начисляет % при любом значении баланса счета.
+    // - код начисляет % при любом значении баланса счета.
     // Подтвердим наш анализ тестами.
 
     // Отработаем тестом вариант положительного баланса счета.
@@ -411,13 +420,12 @@ public class CreditAccountTest {
     @Test
     public void shouldChangeToNegativeTest() {
         CreditAccount account = new CreditAccount(                                      // Помним, что конструктор
-                200,                                                                    // работает с ошибками.
-                5_000,                                                                  // Воспользуемся нашим анализом
-                15                                                                      // этой ошибки и зададим значения
-        );                                                                              // параметрам так, чтобы было
-                                                                                        // удобно проверять имеено метод
-                                                                                        // "yearChange"
-        Assertions.assertEquals(0,account.yearChange());
+                5_000,                                                                  // работает с ошибками.
+                5_000,
+                15
+        );
+
+        Assertions.assertEquals(0,account.yearChange());                        // баланс > 0, % = 0
     }
 
     // Тест при balance = 0 проводить нет смысла по причине особенностей самого метода, который вернет
