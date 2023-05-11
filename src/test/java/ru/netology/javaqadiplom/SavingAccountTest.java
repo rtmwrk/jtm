@@ -5,6 +5,63 @@ import org.junit.jupiter.api.Test;
 
 public class SavingAccountTest {
 
+//    Тест исключений
+
+    @Test
+    public void shouldNotAcceptNegativeMinBalance() { /* Нижний лимит не может быть отрицательным */
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            SavingAccount account = new SavingAccount(
+                    2_000,
+                    -1_000,
+                    10_000,
+                    5);
+        });
+    }
+
+    @Test
+    public void shouldNotAcceptMinBalanceBiggerThanMax() { /* Верхний лимит должен быть больше нижнего */
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            SavingAccount account = new SavingAccount(
+                    2_000,
+                    11_000,
+                    10_000,
+                    5);
+        });
+    }
+
+    @Test
+    public void shouldNotAcceptMinBalanceBiggerThanInitial() { /* Баланс не может уходить за нижний лимит */
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            SavingAccount account = new SavingAccount(
+                    2_000,
+                    3_000,
+                    10_000,
+                    5);
+        });
+    }
+
+    @Test
+    public void shouldNotAcceptInitialBalanceBiggerThanMax() { /* Баланс не может превышать верхний лимит */
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            SavingAccount account = new SavingAccount(
+                    11_000,
+                    3_000,
+                    10_000,
+                    5);
+        });
+    }
+
+    @Test
+    public void shouldNotAcceptNegativeRate() { /* Ставка не может быть отрицательной */
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            SavingAccount account = new SavingAccount(
+                    2_000,
+                    1_000,
+                    10_000,
+                    -1);
+        });
+    }
+
 //    Тесты для оплаты
 
     @Test
@@ -16,9 +73,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.pay(500);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertTrue(account.pay(500)); /* Пытаемся провести покупку */
 
-        Assertions.assertEquals(2_000 - 500, account.getBalance());
+        Assertions.assertEquals(oldBalance - 500, account.getBalance());
     }
 
     @Test
@@ -30,9 +88,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.pay(1_000);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertTrue(account.pay(1_000)); /* Пытаемся провести покупку */
 
-        Assertions.assertEquals(2_000 - 1_000, account.getBalance());
+        Assertions.assertEquals(oldBalance - 1_000, account.getBalance());
     }
 
     @Test
@@ -44,10 +103,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.pay(1_500);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertFalse(account.pay(1_500)); /* Пытаемся провести покупку */
 
-
-        Assertions.assertEquals(2_000, account.getBalance());
+        Assertions.assertEquals(oldBalance, account.getBalance());
     }
 
     @Test
@@ -59,9 +118,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.pay(2_000);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertTrue(account.pay(2_000)); /* Пытаемся провести покупку */
 
-        Assertions.assertEquals(0, account.getBalance());
+        Assertions.assertEquals(oldBalance - 2000, account.getBalance());
     }
 
     @Test
@@ -73,9 +133,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.pay(3_000);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertFalse(account.pay(3_000)); /* Пытаемся провести покупку */
 
-        Assertions.assertEquals(2_000, account.getBalance());
+        Assertions.assertEquals(oldBalance, account.getBalance());
     }
 
     @Test
@@ -87,9 +148,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.pay(0);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertFalse(account.pay(0)); /* Пытаемся провести покупку */
 
-        Assertions.assertEquals(2_000, account.getBalance());
+        Assertions.assertEquals(oldBalance, account.getBalance());
     }
 
     @Test
@@ -101,9 +163,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.pay(-1);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertFalse(account.pay(-1)); /* Пытаемся провести покупку */
 
-        Assertions.assertEquals(2_000, account.getBalance());
+        Assertions.assertEquals(oldBalance, account.getBalance());
     }
 
 //    Тесты для пополнения
@@ -117,9 +180,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.add(3_000);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertTrue(account.add(3_000)); /* Пытаемся пополнить счет */
 
-        Assertions.assertEquals(2_000 + 3_000, account.getBalance());
+        Assertions.assertEquals(oldBalance + 3_000, account.getBalance());
     }
 
     @Test
@@ -131,9 +195,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.add(8_000);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertTrue(account.add(8_000)); /* Пытаемся пополнить счет */
 
-        Assertions.assertEquals(2_000 + 8_000, account.getBalance());
+        Assertions.assertEquals(oldBalance + 8_000, account.getBalance());
     }
 
     @Test
@@ -145,9 +210,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.add(9_000);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertFalse(account.add(9_000)); /* Пытаемся пополнить счет */
 
-        Assertions.assertEquals(2_000, account.getBalance());
+        Assertions.assertEquals(oldBalance, account.getBalance());
     }
 
     @Test
@@ -159,9 +225,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.add(0);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertFalse(account.add(0)); /* Пытаемся пополнить счет */
 
-        Assertions.assertEquals(2_000, account.getBalance());
+        Assertions.assertEquals(oldBalance, account.getBalance());
     }
 
     @Test
@@ -173,9 +240,10 @@ public class SavingAccountTest {
                 5
         );
 
-        account.add(-1);
+        int oldBalance = account.getBalance(); /* Запоминает значение баланса счета */
+        Assertions.assertFalse(account.add(-1)); /* Пытаемся пополнить счет */
 
-        Assertions.assertEquals(2_000, account.getBalance());
+        Assertions.assertEquals(oldBalance, account.getBalance());
     }
 
 //    Тест процентной ставки
@@ -192,47 +260,29 @@ public class SavingAccountTest {
         Assertions.assertEquals(30, account.yearChange());
     }
 
-//    Тест ниже должен работать, не смог придумать решение
-//    однако "бросает" ошибку как и задумано
+//    Тесты для геттеров getMinBalance, getMaxBalance
 
     @Test
-    public void shouldNotAcceptNegativeRate() {
-        Assertions.assertThrows(IllegalArgumentException.class,() -> {
-           SavingAccount account = new SavingAccount(
+    public void shouldGetMinBalance() {
+        SavingAccount account = new SavingAccount(
                 2_000,
                 1_000,
                 10_000,
-                -1);
-        });
+                5
+        );
+
+        Assertions.assertEquals(account.minBalance, account.getMinBalance());
     }
 
-//    Нужны правила для лимитов баланса(min, max) чтобы можно было проверить
-//
-//    @Test
-//    public void shouldNotAcceptBalanceBellowMin() {
-//        SavingAccount account = new SavingAccount(
-//                1_000,
-//                2_000,
-//                10_000,
-//                5
-//        );
-//
-//        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-//            account.();
-//        });
-//    }
-//
-//    @Test
-//    public void shouldNotAcceptBalanceAboveMax() {
-//        SavingAccount account = new SavingAccount(
-//                11_000,
-//                2_000,
-//                10_000,
-//                5
-//        );
-//
-//        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-//            account.();
-//        });
-//    }
+    @Test
+    public void shouldGetMaxBalance() {
+        SavingAccount account = new SavingAccount(
+                2_000,
+                1_000,
+                10_000,
+                5
+        );
+
+        Assertions.assertEquals(account.maxBalance, account.getMaxBalance());
+    }
 }
